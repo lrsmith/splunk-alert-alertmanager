@@ -1,0 +1,13 @@
+[{ 
+	"status": "firing",
+	"labels": {
+		"alertname": "$name",
+		"service": "my-service",
+		"severity":"warning",
+		"instance": "$name.example.net"
+	},
+	"annotations": {
+		"summary": "High latency is high!"
+	},
+	"generatorURL": "http://prometheus.int.example.net/<generating_expression>"
+}]
