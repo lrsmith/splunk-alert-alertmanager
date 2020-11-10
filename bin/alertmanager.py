@@ -13,7 +13,7 @@ ALERT_MANAGER_MSG = {
   'labels' : {
       'alertname'    : '',                  # Populate with Splunk Search Name
       'job'          : 'splunk',            
-      'severity'     : 'critical',
+      'severity'     : '',                  # Populate with Alert param
       'instance'     : '',                  # Populate with Splunk Server Host
   },
   'annotations'      : {
@@ -46,6 +46,8 @@ def build_alertmanager_message(payload):
     # Shows up as 'source' in alert manager and takes you to Splunk Search
     ALERT_MANAGER_MSG['generatorURL']                = payload['server_uri'] + payload['search_uri'] 
 
+    ALERT_MANAGER_MSG['labels']['severity']          = payload['configuration']['severity'] 
+
     return ALERT_MANAGER_MSG
 
 if __name__ == '__main__':
@@ -56,7 +58,7 @@ if __name__ == '__main__':
     alert_payload=build_alertmanager_message(payload)
 
     config = payload.get('configuration')
-    #log("INFO Sending alert payload")
+    log("INFO Sending alert payload %s " % payload)
     res = requests.post(config.get('alertmanager_url'), json=[alert_payload])
     
 
