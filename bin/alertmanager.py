@@ -2,12 +2,9 @@ import json
 import sys
 import requests
 
-
 OK = 0
 ERROR_CODE_UNKNOWN = 1
 ERROR_CODE_VALIDATION_FAILED = 2
-
-ALERT_MANAGER_URL='http://localhost:9093/api/v1/alerts'
 
 ALERT_MANAGER_MSG = {
   'status' : 'firing',
@@ -27,20 +24,32 @@ def log(msg, *args):
     sys.stderr.write(msg + " ".join([str(a) for a in args]) + "\n")
 
 def valdidate_payload(payload):
-    log("DEBUG: %s" % payload)
-    return OK
+    if not 'configuration' in payload:
+      log("FATAL Invalid payload, missing 'configuration'")
+      return False
+
+    config = payload.get('configuration')
+
+    # No default alertmanager URL is set and app setup is required.
+    alertmanager_url = config.get('alertmanager_url')
+    if alertmanager_url == '':
+        log("ERROR Validation error: Alertmanager URL not specified")
+        return False
+    return True
 
 def build_alertmanager_message(payload):
     ALERT_MANAGER_MSG['labels']['alertname'] = payload['search_name'] 
     return ALERT_MANAGER_MSG
 
 if __name__ == '__main__':
-    log("INFO Running python %s" % (sys.version_info[0]))
     payload = json.loads(sys.stdin.read())
-#    if not valdidate_payload(payload):
-#        sys.exit(ERROR_CODE_VALIDATION_FAILED)
-    log("INFO: Sending alert payload")
+
+    if not valdidate_payload(payload):
+        sys.exit(ERROR_CODE_VALIDATION_FAILED)
     alert_payload=build_alertmanager_message(payload)
-    res = requests.post(ALERT_MANAGER_URL, json=[alert_payload])
+
+    config = payload.get('configuration')
+    log("INFO Sending alert payload")
+    res = requests.post(config.get('alertmanager_url'), json=[alert_payload])
     
 

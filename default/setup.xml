@@ -1,0 +1,12 @@
+<setup>
+    <block title="Alertmanager">
+        <text>Send Splunk alerts to Prometheus Alertmanager </text>
+    </block>
+    <block title="Server">
+        <input endpoint="admin/alert_actions" entity="alertmanager" field="param.alertmanager_url">
+            <label>Server Base URL</label>
+            <type>text</type>
+        </input>
+    </block>
+
+</setup>
