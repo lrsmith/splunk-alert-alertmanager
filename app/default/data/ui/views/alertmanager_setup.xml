@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<view template="alertmanager:/templates/setup.html" type="html">
+	<label>Alertmanager Alerts Setup</label>
+</view>

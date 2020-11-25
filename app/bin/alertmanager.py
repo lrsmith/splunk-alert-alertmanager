@@ -53,7 +53,7 @@ def build_alertmanager_message(payload):
     alerts = []
 
     # Split out alert(s) based on fields. i.e. cell or cell,customer
-    if payload['configuration'].has_key('group_by'):
+    if payload.get('configuration')['group_by']:
 
         log("INFO : Grouping alerts by %s." % payload['configuration']['group_by'])
         results = set()
@@ -87,6 +87,8 @@ if __name__ == '__main__':
         sys.exit(ERROR_CODE_VALIDATION_FAILED)
 
     config = payload.get('configuration')
+    log("INFO : payload %s." % payload)
+    log("INFO : payload group_by %s." % payload.get('configuration')['group_by'])
 
     alert_payload=build_alertmanager_message(payload)
     res = requests.post(config.get('alertmanager_url'), json=alert_payload)

@@ -20,6 +20,8 @@ alertmanager_rm:
 # Splunk
 
 splunk_start:
+	docker stop splunk
+	docker rm splunk
 	docker run -d -p 8000:8000 -e "SPLUNK_START_ARGS=--accept-license" -e "SPLUNK_PASSWORD=password" -v /tmp/log.log:/tmp/log.log --network bridge --name splunk splunk/splunk:latest
 
 
